@@ -3,8 +3,12 @@ import { useState } from "react";
 import { BiShow } from "react-icons/bi";
 import { BiHide } from "react-icons/bi";
 import jwt_decode from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { login } from '../store/authSlice';
 
 const Login = () => {
+  const dispatch = useDispatch();
+
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -30,7 +34,7 @@ const Login = () => {
 
   const submitForm = async (e) => {
     e.preventDefault();
-    console.log(credentials);
+    // console.log(credentials);
     const res = await fetch("https://myphysio.digitaldarwin.in/api/login/", {
       method: "POST",
       headers: {
@@ -47,7 +51,7 @@ const Login = () => {
       return;
     }
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     localStorage.clear();
     localStorage.setItem("jwt", data.jwt);
     localStorage.setItem("jwt_data", JSON.stringify(jwt_decode(data.jwt)));
@@ -55,11 +59,12 @@ const Login = () => {
     localStorage.setItem("user_id", data.user_id);
     localStorage.setItem("basic_info", JSON.stringify(data.basic_info));
     setCredentials({ username: "", password: "" });
-    alert("Login Successful.");
+    dispatch(login({...data, status:true}));
+    // alert("Login Successful.");
   };
 
   return (
-    <div className="login-container">
+    <div className="container">
       <h1 className="title">Physioai</h1>
       <p className="welcome">Welcome Back!</p>
       <form className="login-form" onSubmit={submitForm}>
